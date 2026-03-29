@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, useEffect, useRef } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { ChevronLeft, ChevronRight, Shield, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -12,7 +12,7 @@ export default function DiagnosticWizard() {
   const navigate = useNavigate();
   const [answers, setAnswers] = useState({});
   const [currentQuestionId, setCurrentQuestionId] = useState(QUESTIONS[0]?.id);
-  const pendingAdvanceRef = useRef(false);
+  const advanceTimerRef = useRef(null);
 
   const visibleQuestions = useMemo(() => getVisibleQuestions(answers), [answers]);
   const currentIndex = visibleQuestions.findIndex(q => q.id === currentQuestionId);
@@ -20,67 +20,81 @@ export default function DiagnosticWizard() {
   const question = visibleQuestions[safeIndex];
   const totalSteps = visibleQuestions.length;
   const progress = totalSteps > 0 ? Math.round((safeIndex / totalSteps) * 100) : 0;
+  const isLast = safeIndex === totalSteps - 1;
 
   // Sync currentQuestionId if it becomes invisible
   useEffect(() => {
     if (currentIndex < 0 && visibleQuestions.length > 0) {
-      setCurrentQuestionId(visibleQuestions[Math.min(safeIndex, visibleQuestions.length - 1)]?.id);
+      const newIdx = Math.min(safeIndex, visibleQuestions.length - 1);
+      setCurrentQuestionId(visibleQuestions[newIdx]?.id);
     }
   }, [currentIndex, safeIndex, visibleQuestions]);
 
-  // Auto-advance for single choice
+  // Cleanup timer on unmount
   useEffect(() => {
-    if (pendingAdvanceRef.current && question) {
-      pendingAdvanceRef.current = false;
-      const timer = setTimeout(() => {
-        const idx = visibleQuestions.findIndex(q => q.id === question.id);
-        if (idx < visibleQuestions.length - 1) {
-          setCurrentQuestionId(visibleQuestions[idx + 1].id);
-        }
-      }, 350);
-      return () => clearTimeout(timer);
-    }
-  }, [answers, question, visibleQuestions]);
+    return () => { if (advanceTimerRef.current) clearTimeout(advanceTimerRef.current); };
+  }, []);
 
-  const handleAnswer = useCallback((value) => {
+  function scheduleAdvance(questionId) {
+    if (advanceTimerRef.current) clearTimeout(advanceTimerRef.current);
+    advanceTimerRef.current = setTimeout(() => {
+      const qs = getVisibleQuestions({...answers});
+      const idx = qs.findIndex(q => q.id === questionId);
+      if (idx >= 0 && idx < qs.length - 1) {
+        setCurrentQuestionId(qs[idx + 1].id);
+      }
+    }, 400);
+  }
+
+  function handleAnswer(value) {
     if (!question) return;
     if (question.type === 'multi') {
       const current = answers[question.id] || [];
       const updated = current.includes(value)
         ? current.filter(v => v !== value)
         : [...current, value];
-      setAnswers(prev => ({ ...prev, [question.id]: updated }));
+      setAnswers({ ...answers, [question.id]: updated });
     } else {
-      setAnswers(prev => ({ ...prev, [question.id]: value }));
-      pendingAdvanceRef.current = true;
+      const newAnswers = { ...answers, [question.id]: value };
+      setAnswers(newAnswers);
+      // Schedule auto-advance using setTimeout directly (not in useEffect)
+      if (advanceTimerRef.current) clearTimeout(advanceTimerRef.current);
+      const qId = question.id;
+      advanceTimerRef.current = setTimeout(() => {
+        const qs = getVisibleQuestions(newAnswers);
+        const idx = qs.findIndex(q => q.id === qId);
+        if (idx >= 0 && idx < qs.length - 1) {
+          setCurrentQuestionId(qs[idx + 1].id);
+        }
+      }, 400);
     }
-  }, [question, answers]);
+  }
 
-  const canProceed = () => {
+  function canProceed() {
     if (!question) return false;
     const answer = answers[question.id];
     if (!answer) return false;
     if (question.type === 'multi') return Array.isArray(answer) && answer.length > 0;
     return true;
-  };
+  }
 
-  const handleNext = useCallback(() => {
+  function handleNext() {
     if (safeIndex < totalSteps - 1) {
       setCurrentQuestionId(visibleQuestions[safeIndex + 1].id);
     } else {
-      handleFinish();
+      finishDiagnostic();
     }
-  }, [safeIndex, totalSteps, visibleQuestions]);
+  }
 
-  const handleBack = useCallback(() => {
+  function handleBack() {
     if (safeIndex > 0) {
       setCurrentQuestionId(visibleQuestions[safeIndex - 1].id);
     } else {
       navigate("/");
     }
-  }, [safeIndex, visibleQuestions, navigate]);
+  }
 
-  const handleFinish = useCallback(() => {
+  function finishDiagnostic() {
     saveDiagnosticAnswers(answers);
     const scores = calculateScores(answers);
     saveScores(scores);
@@ -88,13 +102,12 @@ export default function DiagnosticWizard() {
     saveActionPlan(plan);
     setOnboardingDone();
     navigate("/dashboard");
-  }, [answers, navigate]);
+  }
 
   if (!question) return null;
 
   const isMulti = question.type === 'multi';
   const currentAnswer = answers[question.id];
-  const isLast = safeIndex === totalSteps - 1;
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] flex flex-col" data-testid="diagnostic-wizard">
