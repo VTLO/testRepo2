@@ -1,0 +1,142 @@
+{
+  "theme_and_archetype": {
+    "theme": "LIGHT",
+    "archetype": "Archetype 1 (Organic & Trust) blended with Soft Utility",
+    "core_emotion": "Reassuring, clear, calm, and protective",
+    "rationale": "For non-technical small business owners, cybersecurity is a major stressor. The interface must act as a calm, helpful human assistant (a 'Copilote'). We avoid dark 'hacker' cyberpunk aesthetics completely. The UI leverages soft navy, blue, and teal to build trust and calm, with generous white space to reduce cognitive load."
+  },
+  "color_system": {
+    "backgrounds": {
+      "app": "#F8FAFC",
+      "surface": "#FFFFFF",
+      "surface_alt": "#F1F5F9",
+      "header_glass": "rgba(255, 255, 255, 0.8)"
+    },
+    "text": {
+      "primary": "#0F172A",
+      "secondary": "#475569",
+      "tertiary": "#64748B",
+      "inverse": "#FFFFFF",
+      "accent": "#0F766E"
+    },
+    "brand_accents": {
+      "primary": "#0F766E",
+      "primary_hover": "#115E59",
+      "primary_light": "#CCFBF1",
+      "secondary": "#2563EB",
+      "secondary_light": "#DBEAFE"
+    },
+    "semantic_states": {
+      "safe_success": {
+        "color": "#10B981",
+        "bg": "#D1FAE5",
+        "border": "#34D399",
+        "usage": "Use for 'Secure' status, high hygiene scores, completed tasks."
+      },
+      "warning_pending": {
+        "color": "#F59E0B",
+        "bg": "#FEF3C7",
+        "border": "#FBBF24",
+        "usage": "Use for unresolved issues, medium risk levels, pending actions."
+      },
+      "critical_danger": {
+        "color": "#EF4444",
+        "bg": "#FEE2E2",
+        "border": "#F87171",
+        "usage": "RESTRICTED. Use ONLY for critical vulnerabilities or immediate required actions."
+      },
+      "info_guidance": {
+        "color": "#3B82F6",
+        "bg": "#EFF6FF",
+        "border": "#93C5FD",
+        "usage": "Use for AI assistant tips, learning center cards, and general guidance."
+      }
+    }
+  },
+  "typography": {
+    "font_families": {
+      "heading": "Outfit, sans-serif",
+      "body": "Figtree, sans-serif",
+      "mono": "JetBrains Mono, monospace"
+    },
+    "rules": {
+      "banned_fonts": ["Inter", "Roboto", "Open Sans", "Syne"],
+      "heading_style": "tracking-tight text-[#0F172A] font-semibold",
+      "body_style": "text-[#475569] leading-relaxed",
+      "overline_style": "uppercase text-xs tracking-[0.15em] font-bold text-[#64748B]",
+      "max_heading_size": "text-4xl sm:text-5xl lg:text-6xl"
+    }
+  },
+  "spacing_and_layout": {
+    "philosophy": "Generous Spacing. Use 2-3x more spacing than default to avoid overwhelming the user.",
+    "container_padding": "p-6 sm:p-8 lg:p-12",
+    "grids": {
+      "marketing_bento": "grid-cols-1 md:grid-cols-8 lg:grid-cols-12 gap-8. Mix tall (col-span-4 row-span-2) and wide (col-span-8) cards.",
+      "dashboard_control_room": "grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6. Every pixel utilized, h-full on children to match neighbors."
+    }
+  },
+  "surface_styles": {
+    "cards": "bg-white rounded-2xl border border-slate-200/80 shadow-[0_2px_10px_rgba(15,23,42,0.04)]",
+    "cards_hover": "hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(15,23,42,0.08)] hover:border-slate-300 transition-all duration-300",
+    "glass_header": "bg-white/80 backdrop-blur-xl border-b border-slate-200/50 supports-[backdrop-filter]:bg-white/60",
+    "ai_chat_bubble": "bg-teal-50 border border-teal-100 rounded-2xl rounded-tl-none p-4 shadow-sm",
+    "user_chat_bubble": "bg-slate-100 border border-slate-200 rounded-2xl rounded-tr-none p-4"
+  },
+  "motion_and_interactions": {
+    "transitions": "transition-all duration-200 ease-out",
+    "hover_states": "Interactive elements MUST have a visible hover state (e.g., hover:bg-teal-800 for primary buttons).",
+    "focus_states": "focus:outline-none focus:ring-2 focus:ring-teal-500/50 focus:ring-offset-2",
+    "page_load": "Fade in sequentially. Stagger list items in the dashboard and action plan."
+  },
+  "components": {
+    "buttons": {
+      "primary": "bg-[#0F766E] text-white hover:bg-[#115E59] rounded-xl px-6 py-3 font-medium transition-colors shadow-sm",
+      "secondary": "bg-white text-[#0F172A] border border-slate-200 hover:border-slate-300 hover:bg-slate-50 rounded-xl px-6 py-3 font-medium transition-colors",
+      "emergency": "bg-[#EF4444] text-white hover:bg-[#DC2626] rounded-xl px-6 py-3 font-bold transition-colors shadow-sm flex items-center gap-2"
+    },
+    "inputs": "bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:bg-white focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 text-[#0F172A]",
+    "progress_bars": "h-3 rounded-full bg-slate-100 overflow-hidden (fill with semantic state color)",
+    "tags": "px-3 py-1 rounded-full text-xs font-semibold"
+  },
+  "media_and_images": {
+    "rules": "Never use placeholder text for images. Only use the approved URLs below.",
+    "assets": {
+      "hero_background": {
+        "url": "https://images.pexels.com/photos/7135020/pexels-photo-7135020.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "description": "Soft blue and green gradient abstract background.",
+        "usage": "Use as a full-bleed background for the landing page hero section with an overlay of bg-white/70 or bg-slate-50/80 to ensure text readability."
+      },
+      "hero_laptop_desk": {
+        "url": "https://images.pexels.com/photos/3987013/pexels-photo-3987013.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "description": "Sleek laptop on a modern desk with green plants.",
+        "usage": "Use as the primary visual for the landing page or about section to convey control, calm workspace, and peace of mind."
+      },
+      "target_audience_business_owner": {
+        "url": "https://images.pexels.com/photos/4473398/pexels-photo-4473398.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "description": "Cheerful female cafe owner in an apron.",
+        "usage": "Use in testimonials, learning center, or 'Who is this for?' section representing the target TPME (Très Petite Entreprise) / small business owner."
+      },
+      "dashboard_abstract_pattern": {
+        "url": "https://images.unsplash.com/photo-1761645502918-d0113463c664?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2OTF8MHwxfHNlYXJjaHwzfHxhYnN0cmFjdCUyMHNvZnQlMjBibHVlJTIwdGVhbCUyMGdyYWRpZW50JTIwYmFja2dyb3VuZHxlbnwwfHx8fDE3NzQ4MjQwNDV8MA&ixlib=rb-4.1.0&q=85",
+        "description": "Abstract gradient of blue, green, and white light.",
+        "usage": "Use inside the Learning Center or AI Assistant header cards as a decorative soft background fill (opacity 20-30%)."
+      }
+    }
+  },
+  "icons": {
+    "library": "lucide-react",
+    "styling": "stroke-width: 1.5. Use text-slate-400 for neutral icons, text-teal-600 for active/primary icons."
+  },
+  "testing": {
+    "requirements": "ALL interactive elements MUST have a data-testid attribute.",
+    "format": "kebab-case, role-based. e.g., data-testid='start-diagnostic-button', data-testid='nav-dashboard-link', data-testid='emergency-mode-toggle'."
+  },
+  "instructions_to_main_agent": [
+    "ALL text, copy, headings, and labels MUST be in French, as specified by 'CyberCopilote TPME'.",
+    "Create a clean, non-intimidating experience. This is not for developers; it's for bakers, consultants, and freelance designers.",
+    "Implement the 'Action Plan' as a satisfying checklist with visual feedback (striking through text, turning green) upon completion.",
+    "Ensure the 'Emergency Mode' is distinctly separated from normal tasks, perhaps using a dedicated modal or red-accented distinct view.",
+    "Do NOT use 'Inter' font. Use 'Outfit' for headings and 'Figtree' for body.",
+    "Use Lucide-React for all icons to maintain a friendly, consistent stroke weight."
+  ]
+}
