@@ -1,0 +1,13 @@
+{
+  "name": "testRepo2",
+  "version": "1.0.0",
+  "description": "Test repository",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {}
+}
