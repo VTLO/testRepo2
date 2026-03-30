@@ -1,12 +1,13 @@
 import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { Shield, ChevronRight, AlertTriangle, CheckCircle2, Clock, TrendingUp, KeyRound, Laptop, HardDrive, Mail, Wifi, ShieldCheck, LifeBuoy } from "lucide-react";
+import { Shield, ChevronRight, AlertTriangle, CheckCircle2, Clock, TrendingUp, KeyRound, Laptop, HardDrive, Mail, Wifi, ShieldCheck, LifeBuoy, LogIn, LogOut, User } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { getScores, getActionPlan } from "@/lib/storage";
 import { getSeverityLabel, getSeverityColor } from "@/lib/scoring";
+import { useAuth } from "@/contexts/AuthContext";
 import Navigation from "@/components/Navigation";
 
 const ICON_MAP = {
@@ -15,6 +16,7 @@ const ICON_MAP = {
 
 export default function Dashboard() {
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
   const scores = getScores();
   const actionPlan = getActionPlan();
 
@@ -56,11 +58,27 @@ export default function Dashboard() {
       {/* Header */}
       <div className="bg-white border-b border-slate-200/50">
         <div className="max-w-3xl mx-auto px-6 py-6 sm:px-8">
-          <div className="flex items-center gap-3 mb-1">
-            <Shield className="w-5 h-5 text-[#0F766E]" strokeWidth={1.5} />
-            <span className="font-['Outfit'] text-lg font-semibold text-[#0F172A]">Tableau de bord</span>
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="flex items-center gap-3 mb-1">
+                <Shield className="w-5 h-5 text-[#0F766E]" strokeWidth={1.5} />
+                <span className="font-['Outfit'] text-lg font-semibold text-[#0F172A]">Tableau de bord</span>
+              </div>
+              <p className="text-sm text-[#64748B]">Vue d'ensemble de votre securite</p>
+            </div>
+            {user ? (
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-[#64748B] hidden sm:block">{user.email}</span>
+                <Button variant="ghost" size="sm" onClick={logout} className="text-[#64748B] hover:text-red-500" data-testid="dashboard-logout">
+                  <LogOut className="w-4 h-4" />
+                </Button>
+              </div>
+            ) : (
+              <Button variant="outline" size="sm" onClick={() => navigate("/login")} className="rounded-lg text-xs" data-testid="dashboard-login">
+                <LogIn className="w-3 h-3 mr-1" /> Se connecter
+              </Button>
+            )}
           </div>
-          <p className="text-sm text-[#64748B]">Vue d'ensemble de votre securite</p>
         </div>
       </div>
 
@@ -196,13 +214,13 @@ export default function Dashboard() {
             Mode urgence
           </Button>
           <Button
-            onClick={() => navigate("/chat")}
+            onClick={() => navigate("/securite")}
             variant="outline"
             className="h-auto py-4 rounded-xl border-[#0F766E]/30 text-[#0F766E] hover:bg-[#CCFBF1]/30 hover:border-[#0F766E]/50 font-medium text-sm flex items-center gap-2"
-            data-testid="dashboard-chat-link"
+            data-testid="dashboard-security-link"
           >
-            <Shield className="w-4 h-4" />
-            Poser une question
+            <ShieldCheck className="w-4 h-4" />
+            Suivi securite
           </Button>
         </div>
       </div>

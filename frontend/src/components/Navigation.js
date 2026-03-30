@@ -1,12 +1,12 @@
-import { useNavigate, useLocation } from "react-router-dom";
-import { LayoutDashboard, ClipboardList, MessageCircle, AlertTriangle, BookOpen, Settings } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { LayoutDashboard, ClipboardList, MessageCircle, AlertTriangle, BookOpen, Settings, ShieldCheck } from "lucide-react";
 
 const NAV_ITEMS = [
   { key: 'dashboard', label: 'Accueil', icon: LayoutDashboard, path: '/dashboard' },
   { key: 'plan', label: 'Plan', icon: ClipboardList, path: '/plan' },
+  { key: 'securite', label: 'Securite', icon: ShieldCheck, path: '/securite' },
   { key: 'chat', label: 'Assistant', icon: MessageCircle, path: '/chat' },
   { key: 'urgence', label: 'Urgence', icon: AlertTriangle, path: '/urgence' },
-  { key: 'apprendre', label: 'Apprendre', icon: BookOpen, path: '/apprendre' },
   { key: 'parametres', label: 'Reglages', icon: Settings, path: '/parametres' },
 ];
 
@@ -26,7 +26,7 @@ export default function Navigation({ active }) {
             <button
               key={item.key}
               onClick={() => navigate(item.path)}
-              className={`flex flex-col items-center gap-0.5 py-1 px-2 rounded-xl transition-all duration-200 min-w-[48px] ${
+              className={`flex flex-col items-center gap-0.5 py-1 px-1.5 rounded-xl transition-all duration-200 min-w-[44px] ${
                 isActive
                   ? isUrgence
                     ? 'text-red-600'
@@ -35,11 +35,8 @@ export default function Navigation({ active }) {
               }`}
               data-testid={`nav-${item.key}`}
             >
-              <item.icon
-                className={`w-5 h-5 ${isActive ? '' : ''}`}
-                strokeWidth={isActive ? 2 : 1.5}
-              />
-              <span className={`text-[10px] font-medium ${isActive ? 'font-semibold' : ''}`}>
+              <item.icon className="w-5 h-5" strokeWidth={isActive ? 2 : 1.5} />
+              <span className={`text-[9px] sm:text-[10px] font-medium ${isActive ? 'font-semibold' : ''}`}>
                 {item.label}
               </span>
             </button>

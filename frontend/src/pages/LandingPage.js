@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Shield, ChevronRight, CheckCircle2, Zap, ClipboardList, HeartHandshake } from "lucide-react";
+import { Shield, ChevronRight, CheckCircle2, Zap, ClipboardList, HeartHandshake, LogIn, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { isOnboardingDone } from "@/lib/storage";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function LandingPage() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const hasCompleted = isOnboardingDone();
 
   const handleStart = () => {
@@ -43,11 +45,32 @@ export default function LandingPage() {
           }}
         />
         <div className="relative max-w-5xl mx-auto px-6 pt-16 pb-20 sm:px-8 lg:px-12">
-          <div className="flex items-center gap-3 mb-8 animate-fade-in">
-            <div className="w-12 h-12 rounded-2xl bg-[#0F766E] flex items-center justify-center shadow-lg shadow-teal-900/20">
-              <Shield className="w-6 h-6 text-white" strokeWidth={1.5} />
+          <div className="flex items-center justify-between mb-8 animate-fade-in">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-2xl bg-[#0F766E] flex items-center justify-center shadow-lg shadow-teal-900/20">
+                <Shield className="w-6 h-6 text-white" strokeWidth={1.5} />
+              </div>
+              <span className="font-['Outfit'] text-xl font-semibold text-[#0F172A] tracking-tight">CyberCopilote</span>
             </div>
-            <span className="font-['Outfit'] text-xl font-semibold text-[#0F172A] tracking-tight">CyberCopilote</span>
+            {user ? (
+              <Button
+                onClick={() => navigate("/dashboard")}
+                variant="outline"
+                className="rounded-xl border-slate-200 text-sm"
+                data-testid="landing-account-button"
+              >
+                <User className="w-4 h-4 mr-1.5" /> {user.name || user.email}
+              </Button>
+            ) : (
+              <Button
+                onClick={() => navigate("/login")}
+                variant="outline"
+                className="rounded-xl border-slate-200 text-sm"
+                data-testid="landing-login-button"
+              >
+                <LogIn className="w-4 h-4 mr-1.5" /> Se connecter
+              </Button>
+            )}
           </div>
 
           <h1
