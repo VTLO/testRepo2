@@ -41,6 +41,16 @@ Build a production-ready, mobile-first French web app called "CyberCopilote TPME
 - [x] PWA manifest
 - [x] Auto-advance wizard for single-choice questions
 - [x] Score recalculation on task completion
+- [x] JWT Authentication (email/password login + registration)
+- [x] Bearer token auth (stored in localStorage, auto-refresh)
+- [x] Multi-email monitoring (add/remove/check up to 10 emails)
+- [x] Email breach checking (known breach database + HIBP Pwned Passwords k-anonymity)
+- [x] Domain security analysis (DNS/MX/SPF/DKIM/DMARC/SSL checks with scoring)
+- [x] Password breach checking (HIBP Pwned Passwords API + strength analysis)
+- [x] Security Monitor page with 3 tabs (Emails, Domaine, Mot de passe)
+- [x] Brute force protection on login
+- [x] Admin seed on startup
+- [x] User data sync (diagnostic/scores/plan stored in MongoDB)
 
 ## Prioritized Backlog
 

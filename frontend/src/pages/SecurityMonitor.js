@@ -31,7 +31,7 @@ function StrengthBar({ strength }) {
 }
 
 export default function SecurityMonitor() {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const api = useApi();
   const [emails, setEmails] = useState([]);
   const [newEmail, setNewEmail] = useState("");
@@ -116,6 +116,15 @@ export default function SecurityMonitor() {
       setLoading(prev => ({ ...prev, password: false }));
     }
   };
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-[#F8FAFC] pb-24 flex items-center justify-center">
+        <Loader2 className="w-8 h-8 text-[#0F766E] animate-spin" />
+        <Navigation active="securite" />
+      </div>
+    );
+  }
 
   if (!user) {
     return (
