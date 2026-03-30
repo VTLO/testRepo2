@@ -7,7 +7,7 @@
     "start": "cd frontend && yarn start",
     "build": "cd frontend && yarn build",
     "test": "cd frontend && yarn test --watchAll=false --passWithNoTests",
-    "lint": "cd frontend && yarn build"
+    "lint": "cd frontend && yarn lint"
   },
   "keywords": ["cybersecurity", "react", "fastapi"],
   "author": "",

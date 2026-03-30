@@ -55,5 +55,5 @@ jobs:
           python-version: '3.12'
 
       - name: Install Python dependencies
-        run: pip install -r backend/requirements.txt || true
+        run: pip install -r backend/requirements.txt
         continue-on-error: true
