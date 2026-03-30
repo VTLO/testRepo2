@@ -35,18 +35,47 @@ export default function Dashboard() {
 
   if (!scores) {
     return (
-      <div className="min-h-screen bg-[#F8FAFC] flex flex-col items-center justify-center px-6">
-        <Shield className="w-16 h-16 text-[#0F766E] mb-6" strokeWidth={1.5} />
-        <h1 className="font-['Outfit'] text-2xl font-semibold text-[#0F172A] mb-3 text-center">Bienvenue sur CyberCopilote</h1>
-        <p className="text-sm text-[#475569] text-center mb-8 max-w-sm">Commencez par le diagnostic pour decouvrir votre score et votre plan d'action personnalise.</p>
-        <Button
-          onClick={() => navigate("/diagnostic")}
-          className="bg-[#0F766E] hover:bg-[#115E59] text-white rounded-xl px-8 py-4 h-auto text-base font-semibold shadow-lg"
-          data-testid="dashboard-start-diagnostic"
-        >
-          Lancer le diagnostic
-          <ChevronRight className="w-5 h-5 ml-2" />
-        </Button>
+      <div className="min-h-screen bg-[#F8FAFC] pb-24" data-testid="dashboard-page">
+        {/* Header */}
+        <div className="bg-white border-b border-slate-200/50">
+          <div className="max-w-3xl mx-auto px-6 py-6 sm:px-8">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="flex items-center gap-3 mb-1">
+                  <Shield className="w-5 h-5 text-[#0F766E]" strokeWidth={1.5} />
+                  <span className="font-['Outfit'] text-lg font-semibold text-[#0F172A]">Tableau de bord</span>
+                </div>
+                <p className="text-sm text-[#64748B]">Vue d'ensemble de votre securite</p>
+              </div>
+              {user ? (
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-[#64748B] hidden sm:block">{user.email}</span>
+                  <Button variant="ghost" size="sm" onClick={logout} className="text-[#64748B] hover:text-red-500" data-testid="dashboard-logout">
+                    <LogOut className="w-4 h-4" />
+                  </Button>
+                </div>
+              ) : (
+                <Button variant="outline" size="sm" onClick={() => navigate("/login")} className="rounded-lg text-xs" data-testid="dashboard-login">
+                  <LogIn className="w-3 h-3 mr-1" /> Se connecter
+                </Button>
+              )}
+            </div>
+          </div>
+        </div>
+        <div className="flex flex-col items-center justify-center px-6 py-16">
+          <Shield className="w-16 h-16 text-[#0F766E] mb-6" strokeWidth={1.5} />
+          <h1 className="font-['Outfit'] text-2xl font-semibold text-[#0F172A] mb-3 text-center">Bienvenue sur CyberCopilote</h1>
+          <p className="text-sm text-[#475569] text-center mb-8 max-w-sm">Commencez par le diagnostic pour decouvrir votre score et votre plan d'action personnalise.</p>
+          <Button
+            onClick={() => navigate("/diagnostic")}
+            className="bg-[#0F766E] hover:bg-[#115E59] text-white rounded-xl px-8 py-4 h-auto text-base font-semibold shadow-lg"
+            data-testid="dashboard-start-diagnostic"
+          >
+            Lancer le diagnostic
+            <ChevronRight className="w-5 h-5 ml-2" />
+          </Button>
+        </div>
+        <Navigation active="dashboard" />
       </div>
     );
   }

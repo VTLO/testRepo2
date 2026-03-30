@@ -115,6 +115,9 @@ class CheckDomainRequest(BaseModel):
 class CheckPasswordRequest(BaseModel):
     password: str
 
+class RefreshRequest(BaseModel):
+    refresh_token: str
+
 class ChatMessage(BaseModel):
     role: str
     content: str
@@ -151,8 +154,7 @@ async def register(req: RegisterRequest, response: Response):
     user_id = str(result.inserted_id)
     access = create_access_token(user_id, email)
     refresh = create_refresh_token(user_id)
-    set_auth_cookies(response, access, refresh)
-    return {"id": user_id, "email": email, "name": user_doc["name"], "role": "user"}
+    return {"id": user_id, "email": email, "name": user_doc["name"], "role": "user", "access_token": access, "refresh_token": refresh}
 
 @api_router.post("/auth/login")
 async def login(req: LoginRequest, request: Request, response: Response):
@@ -168,8 +170,7 @@ async def login(req: LoginRequest, request: Request, response: Response):
     user_id = str(user["_id"])
     access = create_access_token(user_id, email)
     refresh = create_refresh_token(user_id)
-    set_auth_cookies(response, access, refresh)
-    return {"id": user_id, "email": email, "name": user.get("name", ""), "role": user.get("role", "user")}
+    return {"id": user_id, "email": email, "name": user.get("name", ""), "role": user.get("role", "user"), "access_token": access, "refresh_token": refresh}
 
 @api_router.post("/auth/logout")
 async def logout(response: Response):
@@ -183,8 +184,15 @@ async def me(request: Request):
     return {"id": user["_id"], "email": user["email"], "name": user.get("name", ""), "role": user.get("role", "user")}
 
 @api_router.post("/auth/refresh")
-async def refresh_token(request: Request, response: Response):
-    token = request.cookies.get("refresh_token")
+async def refresh_token(request: Request):
+    # Accept token from body or cookie
+    try:
+        body = await request.json()
+        token = body.get("refresh_token")
+    except Exception:
+        token = None
+    if not token:
+        token = request.cookies.get("refresh_token")
     if not token:
         raise HTTPException(status_code=401, detail="Token de rafraichissement manquant")
     try:
@@ -195,8 +203,8 @@ async def refresh_token(request: Request, response: Response):
         if not user:
             raise HTTPException(status_code=401, detail="Utilisateur non trouve")
         new_access = create_access_token(str(user["_id"]), user["email"])
-        response.set_cookie(key="access_token", value=new_access, httponly=True, secure=False, samesite="lax", max_age=3600, path="/")
-        return {"message": "Token rafraichi"}
+        new_refresh = create_refresh_token(str(user["_id"]))
+        return {"access_token": new_access, "refresh_token": new_refresh}
     except jwt.InvalidTokenError:
         raise HTTPException(status_code=401, detail="Token invalide")
 
@@ -630,7 +638,10 @@ app.include_router(api_router)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[os.environ.get("FRONTEND_URL", "http://localhost:3000")],
+    allow_origins=[
+        os.environ.get("FRONTEND_URL", "http://localhost:3000"),
+        "http://localhost:3000",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

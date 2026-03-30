@@ -11,6 +11,8 @@ class CyberCopiloteAPITester:
         self.session = requests.Session()
         self.tests_run = 0
         self.tests_passed = 0
+        self.access_token = None
+        self.refresh_token = None
         self.admin_credentials = {
             "email": "admin@cybercopilote.fr",
             "password": "CyberAdmin2026!"
@@ -46,6 +48,13 @@ class CyberCopiloteAPITester:
         except Exception as e:
             self.log_test("Health endpoint", False, str(e))
 
+    def set_auth_header(self):
+        """Set Authorization header with Bearer token"""
+        if self.access_token:
+            self.session.headers.update({"Authorization": f"Bearer {self.access_token}"})
+        else:
+            self.session.headers.pop("Authorization", None)
+
     def test_auth_register(self):
         """Test user registration"""
         print("\n🔍 Testing User Registration...")
@@ -62,9 +71,10 @@ class CyberCopiloteAPITester:
             success = response.status_code == 200
             if success:
                 data = response.json()
-                success = all(key in data for key in ["id", "email", "name", "role"])
+                success = all(key in data for key in ["id", "email", "name", "role", "access_token", "refresh_token"])
                 if success:
                     print(f"   Registered user: {data['email']} (ID: {data['id']})")
+                    print(f"   Received tokens: access_token and refresh_token")
             self.log_test("User registration", success, f"Status: {response.status_code}")
             return test_email if success else None
         except Exception as e:
@@ -80,9 +90,14 @@ class CyberCopiloteAPITester:
             success = response.status_code == 200
             if success:
                 data = response.json()
-                success = all(key in data for key in ["id", "email", "role"])
+                success = all(key in data for key in ["id", "email", "role", "access_token", "refresh_token"])
                 if success and data.get("role") == "admin":
                     print(f"   Logged in as: {data['email']} (Role: {data['role']})")
+                    # Store tokens for subsequent requests
+                    self.access_token = data["access_token"]
+                    self.refresh_token = data["refresh_token"]
+                    self.set_auth_header()
+                    print(f"   Stored access_token and refresh_token")
                 else:
                     success = False
             self.log_test("Admin login", success, f"Status: {response.status_code}")
@@ -115,6 +130,7 @@ class CyberCopiloteAPITester:
         
         # Test adding email
         test_email = "test@yahoo.com"  # Known to have breaches
+        email_id = None
         try:
             response = self.session.post(f"{self.base_url}/api/emails", json={"email": test_email})
             success = response.status_code == 200
@@ -125,7 +141,6 @@ class CyberCopiloteAPITester:
             self.log_test("Add email for monitoring", success, f"Status: {response.status_code}")
         except Exception as e:
             self.log_test("Add email for monitoring", False, str(e))
-            email_id = None
 
         # Test listing emails
         try:
@@ -215,6 +230,11 @@ class CyberCopiloteAPITester:
             if success:
                 data = response.json()
                 success = "message" in data
+                if success:
+                    # Clear tokens after logout
+                    self.access_token = None
+                    self.refresh_token = None
+                    self.set_auth_header()
             self.log_test("Logout", success, f"Status: {response.status_code}")
             return success
         except Exception as e:
@@ -224,6 +244,9 @@ class CyberCopiloteAPITester:
     def test_unauthorized_access(self):
         """Test that protected endpoints require authentication"""
         print("\n🔍 Testing Unauthorized Access Protection...")
+        
+        # Create a new session without auth headers
+        unauth_session = requests.Session()
         
         protected_endpoints = [
             ("/api/auth/me", "GET"),
@@ -236,9 +259,9 @@ class CyberCopiloteAPITester:
         for endpoint, method in protected_endpoints:
             try:
                 if method == "GET":
-                    response = self.session.get(f"{self.base_url}{endpoint}")
+                    response = unauth_session.get(f"{self.base_url}{endpoint}")
                 else:
-                    response = self.session.post(f"{self.base_url}{endpoint}", json={})
+                    response = unauth_session.post(f"{self.base_url}{endpoint}", json={})
                 
                 success = response.status_code == 401
                 self.log_test(f"Unauthorized access to {endpoint}", success, f"Status: {response.status_code}")
