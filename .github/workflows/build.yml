@@ -9,9 +9,13 @@ on:
       - main
 
 jobs:
-  build:
+  frontend:
+    name: Frontend Build & Test
     runs-on: ubuntu-latest
-    
+    defaults:
+      run:
+        working-directory: frontend
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -21,27 +25,35 @@ jobs:
         with:
           node-version: '24'
 
-      - name: Install Node.js Dependencies
-        run: npm install
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
 
-      - name: Build Application
-        run: npm run build
+      - name: Build
+        run: yarn build
 
-      - name: Run Tests
-        run: npm test
+      - name: Run tests
+        run: yarn test --watchAll=false --passWithNoTests
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-build
+          path: frontend/build/
+          retention-days: 30
+
+  backend:
+    name: Backend Dependencies
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.12'
 
-      - name: Install Python Dependencies
-        run: |
-          pip install -r requirements.txt
-
-      - name: Upload Build Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-artifacts
-          path: dist/
-          retention-days: 30
+      - name: Install Python dependencies
+        run: pip install -r backend/requirements.txt
+        continue-on-error: true

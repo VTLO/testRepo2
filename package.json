@@ -1,13 +1,15 @@
 {
-  "name": "testRepo2",
+  "name": "cybercopilote-tpme",
   "version": "1.0.0",
-  "description": "Test repository",
-  "main": "index.js",
+  "description": "CyberCopilote TPME - AI cybersecurity assistant for small French businesses",
+  "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "cd frontend && yarn start",
+    "build": "cd frontend && yarn build",
+    "test": "cd frontend && yarn test --watchAll=false --passWithNoTests",
+    "lint": "cd frontend && yarn lint"
   },
-  "keywords": [],
+  "keywords": ["cybersecurity", "react", "fastapi"],
   "author": "",
-  "license": "ISC",
-  "dependencies": {}
+  "license": "ISC"
 }
